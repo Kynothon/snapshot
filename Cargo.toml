@@ -1,0 +1,16 @@
+[package]
+name = "snapshot"
+version = "0.1.0"
+authors = ["Gnaphron <gnaphron@gmail.com>"]
+edition = "2018"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+gstreamer = { version = "0.16", features = ["serde", "v1_14"] }
+gstreamer-app = "0.16.0"
+gstreamer-video = "0.16.0"
+glib = "0.10.1"
+gdk-pixbuf = { version = "0.9.0", features = ["v2_32"] }
+anyhow = "1.0.32"
+derive_more = "0.99.9"
