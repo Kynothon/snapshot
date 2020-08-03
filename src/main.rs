@@ -78,12 +78,13 @@ fn main() {
 
     let duration = pipeline.query_duration::<gst::ClockTime>().unwrap_or(gst::ClockTime::from_seconds(0));
 
-    let position = duration.seconds().unwrap() * 5 / 100;
+    let percent = args[3].parse::<u64>().unwrap_or(5);
+    let position = duration.nseconds().unwrap() * percent / 100;
 
-    println!("Duration: {}, seek to 5%: {}s", duration, position);
+    println!("Duration: {}, seek to {}%: {}s", duration, percent, position);
 
     pipeline
-        .seek_simple(gst::SeekFlags::FLUSH | gst::SeekFlags::KEY_UNIT, gst::ClockTime::from_seconds(position))
+        .seek_simple(gst::SeekFlags::FLUSH | gst::SeekFlags::KEY_UNIT, gst::ClockTime::from_nseconds(position))
         .expect("Unable to seek in the media");
 
     let appsink = sink.dynamic_cast::<gst_app::AppSink>().unwrap();
