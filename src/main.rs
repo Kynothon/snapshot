@@ -3,6 +3,7 @@ extern crate gstreamer_app as gst_app;
 extern crate gstreamer_video as gst_video;
 extern crate gdk_pixbuf;
 extern crate glib;
+extern crate gio;
 
 use gst::prelude::*;
 
@@ -10,6 +11,7 @@ use anyhow::Error;
 use derive_more::{Display, Error};
 
 use std::env;
+use std::io;
 
 #[derive(Debug, Display, Error)]
 #[display(fmt = "Missing element {}", _0)]
@@ -41,6 +43,7 @@ fn create_pipeline(uri: &String) -> Result<gst::Pipeline, Error> {
 }
 
 fn sample_to_png(sample: &gst::Sample, filename: &String) -> Result<(), Error> {
+    println!("Sample: {:#?}", sample);
     let caps = sample.get_caps().unwrap();
     let s = caps.get_structure(0).unwrap();
     let width = s.get_some::<i32>("width")?;
@@ -57,7 +60,13 @@ fn sample_to_png(sample: &gst::Sample, filename: &String) -> Result<(), Error> {
                                                 height,
                                                 width * 3);
 
-    let _save = pixbuf.savev(filename, "png", &[]);
+    //let _save = pixbuf.savev(filename, "png", &[]);
+    //let _save = pixbuf.save_to_bufferv("png", &[]);
+
+    let stdout = io::stderr();
+    let iooutput = gio::WriteOutputStream::new(stdout);
+
+    let fut = pixbuf.save_to_streamv(&iooutput, "jpeg", &[], None as Option<&gio::Cancellable>);
 
     Ok(())
 }
